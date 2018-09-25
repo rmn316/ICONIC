@@ -1,12 +1,16 @@
 services:
     database_service:
-        class:        AppBundle\Service\DatabaseService
-        arguments:    [%database_host%, %database_port%, %database_name%]
+        class: AppBundle\Service\DatabaseService
+        arguments: [@database_connection, %database_name%]
     cache_service:
-        class:        AppBundle\Service\CacheService
-        arguments:    [@cache_connection]
+        class: AppBundle\Service\CacheService
+        arguments: [@cache_connection]
+    database_connection:
+        class: MongoDB\Client
+        arguments:
+          - mongodb://%database_host%:%database_port%
     cache_connection:
-        class:        Predis\Client
+        class: Predis\Client
         arguments:
           - host: %cache_host%
           - port: %cache_port%

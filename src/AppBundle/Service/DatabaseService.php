@@ -7,23 +7,25 @@ use \MongoDB;
 
 class DatabaseService
 {
+    /**
+     * @var MongoDB\Database
+     */
     protected $database;
 
-    public function __construct($host, $port, $database)
+    /**
+     * DatabaseService constructor.
+     * @param MongoDB\Client $client
+     * @param string $database
+     */
+    public function __construct(MongoDB\Client $client, $database)
     {
-        $mongoClient = new MongoDB\Client("mongodb://$host:$port");
-
-        $this->setDatabase(
-            $mongoClient->$database
-        );
+        $this->database = $client->selectDatabase($database);
     }
 
-    public function setDatabase(MongoDB\Database $database)
-    {
-        $this->database = $database;
-    }
-
-    public function getDatabase()
+    /**
+     * @return MongoDB\Database
+     */
+    public function getDatabase() : MongoDB\Database
     {
         return $this->database;
     }
