@@ -11,23 +11,69 @@ use Predis;
 **/
 class CacheService
 {
-    public function __construct($host, $port, $prefix)
-    {
+    /**
+     * @var Predis\ClientInterface
+     */
+    private $client;
 
+    /**
+     * CacheService constructor.
+     * @param Predis\ClientInterface $client
+     */
+    public function __construct(Predis\ClientInterface $client)
+    {
+        $this->client = $client;
     }
 
-    public function get($key)
+    /**
+     * @param $key
+     * @return string
+     */
+    public function get($key) : string
     {
-
+        if ($this->isValidConnection() && $this->client->exists($key)) {
+            return $this->client->get($key);
+        } else {
+            return "";
+        }
     }
 
-    public function set($key, $value)
+    /**
+     * @param string $key
+     * @param string $value
+     * @return void
+     */
+    public function set($key, $value) : void
     {
+        if (!$this->isValidConnection()) {
+            $this->client->connect();
+        }
 
+        $this->client->set($key, $value);
     }
 
-    public function del($key)
+    /**
+     * @param string $key
+     * @return void
+     */
+    public function del($key) : void
     {
+        if (!$this->isValidConnection()) {
+            $this->client->connect();
+        }
 
+        $this->client->del([$key]);
+    }
+
+    /**
+     * @return bool
+     */
+    private function isValidConnection() : bool
+    {
+        if (!$this->client->getConnection()->isConnected()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

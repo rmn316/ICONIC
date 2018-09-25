@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Service\CacheService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,15 +15,22 @@ class CustomersController extends Controller
      * @Route("/customers/")
      * @Method("GET")
      */
-    public function getAction()
+    public function getAction() : JsonResponse
     {
+        /** @var CacheService $cacheService */
         $cacheService = $this->get('cache_service');
+
         // TODO: Implement logic here
+        // fetch customers from the cache service.
+        $customers = json_decode($cacheService->get('customers'));
 
         if (empty($customers)) {
             $database = $this->get('database_service')->getDatabase();
             $customers = $database->customers->find();
             $customers = iterator_to_array($customers);
+
+            // add to the cache.
+            $cacheService->set('customers', json_encode($customers));
         }
 
         return new JsonResponse($customers);
@@ -32,7 +40,7 @@ class CustomersController extends Controller
      * @Route("/customers/")
      * @Method("POST")
      */
-    public function postAction(Request $request)
+    public function postAction(Request $request) : JsonResponse
     {
         $database = $this->get('database_service')->getDatabase();
         $customers = json_decode($request->getContent());
@@ -45,6 +53,8 @@ class CustomersController extends Controller
             $database->customers->insertOne($customer);
         }
 
+        $this->get('cache_service');
+
         return new JsonResponse(['status' => 'Customers successfully created']);
     }
 
@@ -52,10 +62,12 @@ class CustomersController extends Controller
      * @Route("/customers/")
      * @Method("DELETE")
      */
-    public function deleteAction()
+    public function deleteAction() : JsonResponse
     {
         $database = $this->get('database_service')->getDatabase();
         $database->customers->drop();
+
+        $this->get('cache_service')->del('customers');
 
         return new JsonResponse(['status' => 'Customers successfully deleted']);
     }

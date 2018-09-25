@@ -4,4 +4,10 @@ services:
         arguments:    [%database_host%, %database_port%, %database_name%]
     cache_service:
         class:        AppBundle\Service\CacheService
-        arguments:    [%cache_host%, %cache_port%, %cache_prefix%]
+        arguments:    [@cache_connection]
+    cache_connection:
+        class:        Predis\Client
+        arguments:
+          - host: %cache_host%
+          - port: %cache_port%
+          - prefix: %cache_prefix
