@@ -14,6 +14,8 @@ class CustomersController extends Controller
     /**
      * @Route("/customers/")
      * @Method("GET")
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getAction() : JsonResponse
     {
@@ -39,6 +41,9 @@ class CustomersController extends Controller
     /**
      * @Route("/customers/")
      * @Method("POST")
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function postAction(Request $request) : JsonResponse
     {
@@ -61,6 +66,8 @@ class CustomersController extends Controller
     /**
      * @Route("/customers/")
      * @Method("DELETE")
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function deleteAction() : JsonResponse
     {
