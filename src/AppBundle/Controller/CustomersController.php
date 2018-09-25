@@ -54,9 +54,7 @@ class CustomersController extends Controller
             return new JsonResponse(['status' => 'No donuts for you'], 400);
         }
 
-        foreach ($customers as $customer) {
-            $database->customers->insertOne($customer);
-        }
+        $database->customers->insertMany($customers);
 
         $this->get('cache_service');
 
