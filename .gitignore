@@ -10,5 +10,8 @@
 /vendor/
 /bin/
 /composer.phar
+/var/logs
+
 interview.tar.gz
 .DS_Store
+/.idea
